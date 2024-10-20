@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>128x128 Pixel Image</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(128, 10px);
+            grid-template-rows: repeat(128, 10px);
+        }
+        .cell {
+            width: 10px;
+            height: 10px;
+            background-color: black;
+            border: 1px solid #888888;
+        }
+        .filled {
+            background-color: rgb(255, 255, 255);
+        }
+    </style>
+</head>
+<body>
+    <div class="grid" id="grid">
+        {% for y in range(pixels|length) %}
+            {% for x in range(pixels|length) %}
+                {% set pixel = pixels[y][x] %}
+                <div id="{{ x }}{{ y }}" data-x="{{ x }}" data-y="{{ y }}" class="cell {% if pixel %}filled{% endif %}"></div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    <button onclick="sendData()">Send Data</button>
+
+    <script>
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach((cell, index) => {
+            cell.addEventListener('click', () => {
+                x = cell.getAttribute('data-x');
+                y = cell.getAttribute('data-y');
+
+                sendData(x, y);
+            });
+        });
+
+        function sendData(x, y) {
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ x: x, y: y}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                x, y, pixel = data['x'], data['y'], data['pixel'];
+                const cell = document.getElementById(`${x}${y}`);
+                if (pixel) {
+                    cell.classList.add('filled');
+                } else {
+                    cell.classList.remove('filled');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
