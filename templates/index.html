@@ -33,15 +33,29 @@
     <button onclick="sendData()">Send Data</button>
 
     <script>
+        let isMouseDown = false;
         const cells = document.querySelectorAll('.cell');
         cells.forEach((cell, index) => {
-            cell.addEventListener('click', () => {
-                x = cell.getAttribute('data-x');
-                y = cell.getAttribute('data-y');
-
-                sendData(x, y);
+            cell.addEventListener('mousedown', () => {
+                isMouseDown = true;
+                toggleCell(cell);
+            });
+            cell.addEventListener('mouseup', () => {
+                isMouseDown = false;
+            });
+            cell.addEventListener('mouseenter', () => {
+                if (isMouseDown) {
+                    toggleCell(cell);
+                }
             });
         });
+
+        function toggleCell(cell) {
+            const x = cell.getAttribute('data-x');
+            const y = cell.getAttribute('data-y');
+            cell.classList.toggle('filled');
+            sendData(x, y);
+        }
 
         function sendData(x, y) {
             fetch('/submit', {
