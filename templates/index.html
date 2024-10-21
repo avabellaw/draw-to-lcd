@@ -65,19 +65,6 @@
                 },
                 body: JSON.stringify({ x: x, y: y}),
             })
-            .then(response => response.json())
-            .then(data => {
-                x, y, pixel = data['x'], data['y'], data['pixel'];
-                const cell = document.getElementById(`${x}${y}`);
-                if (pixel) {
-                    cell.classList.add('filled');
-                } else {
-                    cell.classList.remove('filled');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
         }
     </script>
 </body>

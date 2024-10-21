@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 
 class PixelGrid:
-    '''Class to represent the webpage's pixel grid and map to the lcd's display pixels'''
+    '''Class representing webpage pixel grid and map to the lcd's pixels'''
     def __init__(self, size):
         self.pixels = [[0] * size for _ in range(size)]
         self.size = size
@@ -56,7 +56,7 @@ def submit():
     pixel_grid.set_pixel(x, y, pixel)
 
     return jsonify({'status': 'success',
-                    'pixel_value': f"{pixel}", 'x': x, 'y': y})
+                    'pixel': f"{pixel}", 'x': x, 'y': y})
 
 
 if __name__ == '__main__':
