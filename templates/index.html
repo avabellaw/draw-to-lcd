@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>128x128 Pixel Image</title>
     <style>
-        .grid {
+        #grid {
             display: grid;
             grid-template-columns: repeat(128, 10px);
             grid-template-rows: repeat(128, 10px);
@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-    <div class="grid" id="grid">
+    <div id="grid">
         {% for y in range(pixels|length) %}
             {% for x in range(pixels|length) %}
                 {% set pixel = pixels[y][x] %}
@@ -34,20 +34,20 @@
 
     <script>
         let isMouseDown = false;
-        const cells = document.querySelectorAll('.cell');
-        cells.forEach((cell, index) => {
-            cell.addEventListener('mousedown', () => {
-                isMouseDown = true;
-                toggleCell(cell);
-            });
-            cell.addEventListener('mouseup', () => {
-                isMouseDown = false;
-            });
-            cell.addEventListener('mouseenter', () => {
-                if (isMouseDown) {
-                    toggleCell(cell);
-                }
-            });
+        const grid = document.getElementById('grid');
+        grid.addEventListener('mousedown', (event) => {
+            isMouseDown = true;
+            toggleCell(event.target);
+        });
+
+        grid.addEventListener('mouseup', () => {
+            isMouseDown = false;
+        });
+
+        grid.addEventListener('mouseover', (event) => {
+            if (isMouseDown) {
+                toggleCell(event.target);
+            }
         });
 
         function toggleCell(cell) {
