@@ -1,0 +1,14 @@
+#grid {
+    display: grid;
+    grid-template-columns: repeat(128, 10px);
+    grid-template-rows: repeat(128, 10px);
+}
+.cell {
+    width: 10px;
+    height: 10px;
+    background-color: black;
+    border: 1px solid #888888;
+}
+.filled {
+    background-color: rgb(255, 255, 255);
+}

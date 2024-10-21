@@ -4,22 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>128x128 Pixel Image</title>
-    <style>
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(128, 10px);
-            grid-template-rows: repeat(128, 10px);
-        }
-        .cell {
-            width: 10px;
-            height: 10px;
-            background-color: black;
-            border: 1px solid #888888;
-        }
-        .filled {
-            background-color: rgb(255, 255, 255);
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <div id="grid">
@@ -32,45 +17,6 @@
     </div>
     <button onclick="sendData()">Send Data</button>
 
-    <script>
-        let isMouseDown = false;
-        const grid = document.getElementById('grid');
-        grid.addEventListener('mousedown', (event) => {
-            isMouseDown = true;
-            toggleCell(event.target);
-        });
-
-        grid.addEventListener('mouseup', () => {
-            isMouseDown = false;
-        });
-
-        grid.addEventListener('mouseover', (event) => {
-            if (isMouseDown) {
-                toggleCell(event.target);
-            }
-        });
-
-        async function toggleCell(cell) {
-            const x = cell.getAttribute('data-x');
-            const y = cell.getAttribute('data-y');
-            cell.classList.toggle('filled');
-            await sendData(x, y);
-        }
-
-        async function sendData(x, y) {
-            try {
-                const response = await fetch('/submit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ x: x, y: y }),
-                });
-                const data = await response.json();
-                } catch (error) {
-                    console.error('Error:', error);
-                }
-            }
-    </script>
+    <script src="{{ url_for('static', filename='js/grid.js') }}"></script>
 </body>
 </html>
