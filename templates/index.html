@@ -50,22 +50,27 @@
             }
         });
 
-        function toggleCell(cell) {
+        async function toggleCell(cell) {
             const x = cell.getAttribute('data-x');
             const y = cell.getAttribute('data-y');
             cell.classList.toggle('filled');
-            sendData(x, y);
+            await sendData(x, y);
         }
 
-        function sendData(x, y) {
-            fetch('/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ x: x, y: y}),
-            })
-        }
+        async function sendData(x, y) {
+            try {
+                const response = await fetch('/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ x: x, y: y }),
+                });
+                const data = await response.json();
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
     </script>
 </body>
 </html>

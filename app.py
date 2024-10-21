@@ -16,7 +16,6 @@ class PixelGrid:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.sendto("GET".encode(), ('192.168.1.169', 65432))
             data, _ = s.recvfrom(65536)
-            print(f"Received data: {data}")
             self.pixels = json.loads(data.decode())
 
     def set_pixel(self, x, y, value):
