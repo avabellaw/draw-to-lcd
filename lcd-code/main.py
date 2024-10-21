@@ -31,9 +31,12 @@ def start_server():
             if data == b"GET":
                 pixels_arr = get_pixel_arr(lcd.pixels)
                 server_socket.sendto(json.dumps(pixels_arr).encode(), addr)
-                continue
-            x, y, pixel = map(int, data.decode().split(','))
-            pixel_queue.put((x, y, pixel))
+            elif data == b"CLEAR":
+                lcd.clear()
+                pixel_queue.queue.clear()
+            else:
+                x, y, pixel = map(int, data.decode().split(','))
+                pixel_queue.put((x, y, pixel))
     except KeyboardInterrupt:
         print("Closing server")
         server_socket.close()

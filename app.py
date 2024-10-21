@@ -21,15 +21,19 @@ class PixelGrid:
     def set_pixel(self, x, y, value):
         '''Set a pixel on the webpage and update the lcd'''
         self.pixels[y][x] = value
-        self.send_to_lcd(x, y, value)
+        self.send_pixel_to_lcd(x, y, value)
 
-    def send_to_lcd(self, x, y, pixel):
-        '''Send a pixel to the lcd'''
-        message = f"{x},{y},{pixel}"
+    def send_to_lcd(self, message):
+        '''Send a message to the lcd'''
         print(f"Sending to LCD: {message}")
 
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.sendto(message.encode(), ('192.168.1.169', 65432))
+
+    def send_pixel_to_lcd(self, x, y, pixel):
+        '''Send a pixel to the lcd'''
+        message = f"{x},{y},{pixel}"
+        self.send_to_lcd(message)
 
     def __len__(self):
         return self.size**2
@@ -56,6 +60,14 @@ def submit():
 
     return jsonify({'status': 'success',
                     'pixel': f"{pixel}", 'x': x, 'y': y})
+
+
+@app.route('/clear', methods=['POST'])
+def clear():
+    '''Controller for clearing the pixel grid'''
+    pixel_grid.send_to_lcd("CLEAR")
+
+    return jsonify({'status': 'success'})
 
 
 if __name__ == '__main__':
