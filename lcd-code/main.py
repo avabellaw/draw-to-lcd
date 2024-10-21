@@ -29,11 +29,19 @@ def start_server():
 
 def process_queue():
     lcd = OLED()
+    pixels_drawn_count = 0
     while True:
         if not pixel_queue.empty():
             x, y, pixel = pixel_queue.get()
             lcd.set_pixel(x, y, pixel)
+            pixels_drawn_count += 1
+            if pixels_drawn_count >= 15:
+                lcd.show()
+                pixels_drawn_count = 0
         else:
+            if pixels_drawn_count > 0:
+                lcd.show()
+                pixels_drawn_count = 0
             time.sleep(0.1)
 
 
