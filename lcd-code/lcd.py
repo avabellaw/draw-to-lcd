@@ -15,7 +15,6 @@ class OLED():
         self.disp = OLED_1in5.OLED_1in5()
         self.disp.Init()
         self.disp.clear()
-        self.pixels_drawn_count = 0
 
         # Image for drawing to
         self.image1 = Image.new('L', (self.disp.width, self.disp.height), 0)

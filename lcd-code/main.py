@@ -7,8 +7,16 @@ from lcd import OLED
 import _thread
 import queue
 import time
+import json
 
 pixel_queue = queue.Queue()
+lcd = OLED()
+
+
+def get_pixel_arr(pixel_access):
+    height = lcd.disp.height
+    width = lcd.disp.width
+    return [[pixel_access[x, y] for x in range(width)] for y in range(height)]
 
 
 def start_server():
@@ -20,6 +28,10 @@ def start_server():
     try:
         while True:
             data, addr = server_socket.recvfrom(1024)
+            if data == b"GET":
+                pixels_arr = get_pixel_arr(lcd.pixels)
+                server_socket.sendto(json.dumps(pixels_arr).encode(), addr)
+                continue
             x, y, pixel = map(int, data.decode().split(','))
             pixel_queue.put((x, y, pixel))
     except KeyboardInterrupt:
@@ -28,7 +40,6 @@ def start_server():
 
 
 def process_queue():
-    lcd = OLED()
     pixels_drawn_count = 0
     while True:
         if not pixel_queue.empty():
