@@ -9,6 +9,24 @@
     background-color: black;
     border: 1px solid #888888;
 }
-.filled {
+/* .filled {
     background-color: rgb(255, 255, 255);
-}
+} */
+
+/* Define shades of white based on data-shade attribute */
+/* Define shades of white based on data-shade attribute */
+.cell[data-colour="1"] { background-color: rgb(136, 136, 136); }
+.cell[data-colour="2"] { background-color: rgb(144.5, 144.5, 144.5); }
+.cell[data-colour="3"] { background-color: rgb(153, 153, 153); }
+.cell[data-colour="4"] { background-color: rgb(161.5, 161.5, 161.5); }
+.cell[data-colour="5"] { background-color: rgb(170, 170, 170); }
+.cell[data-colour="6"] { background-color: rgb(178.5, 178.5, 178.5); }
+.cell[data-colour="7"] { background-color: rgb(187, 187, 187); }
+.cell[data-colour="8"] { background-color: rgb(195.5, 195.5, 195.5); }
+.cell[data-colour="9"] { background-color: rgb(204, 204, 204); }
+.cell[data-colour="10"] { background-color: rgb(212.5, 212.5, 212.5); }
+.cell[data-colour="11"] { background-color: rgb(221, 221, 221); }
+.cell[data-colour="12"] { background-color: rgb(229.5, 229.5, 229.5); }
+.cell[data-colour="13"] { background-color: rgb(238, 238, 238); }
+.cell[data-colour="14"] { background-color: rgb(246.5, 246.5, 246.5); }
+.cell[data-colour="15"] { background-color: rgb(255, 255, 255); }

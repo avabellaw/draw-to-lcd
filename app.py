@@ -17,6 +17,7 @@ class PixelGrid:
             s.sendto("GET".encode(), ('192.168.1.169', 65432))
             data, _ = s.recvfrom(65536)
             self.pixels = json.loads(data.decode())
+            print(self.pixels)
 
     def set_pixel(self, x, y, value):
         '''Set a pixel on the webpage and update the lcd'''
@@ -25,8 +26,6 @@ class PixelGrid:
 
     def send_to_lcd(self, message):
         '''Send a message to the lcd'''
-        print(f"Sending to LCD: {message}")
-
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.sendto(message.encode(), ('192.168.1.169', 65432))
 
@@ -53,9 +52,9 @@ def home():
 def submit():
     '''Controller for handling pixel data from the webpage'''
     data = request.get_json()
-    x, y = int(data.get('x')), int(data.get('y'))
+    x, y, colour = int(data.get('x')), int(data.get('y')), data.get('colour')
 
-    pixel = 1 if pixel_grid.pixels[y][x] == 0 else 0
+    pixel = colour
     pixel_grid.set_pixel(x, y, pixel)
 
     return jsonify({'status': 'success',
@@ -71,4 +70,4 @@ def clear():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)

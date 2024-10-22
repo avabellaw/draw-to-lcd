@@ -1,6 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     let isMouseDown = false;
+    let colour = 15;
     
     const grid = document.getElementById('grid');
     const clearButton = document.getElementById('clear');
@@ -8,14 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event handlers
     const handleMouseDown = (event) => {
         isMouseDown = true;
-        toggleCell(event.target);
+        setCell(event.target);
     }
 
     const handleMouseUp = () => { isMouseDown = false; }
 
     const handleMouseOver = (event) => {
         if (isMouseDown) {
-            toggleCell(event.target);
+            setCell(event.target);
         }
     }  
 
@@ -32,20 +33,25 @@ document.addEventListener('DOMContentLoaded', () => {
     grid.addEventListener('mouseup', handleMouseUp);
     grid.addEventListener('mouseover', handleMouseOver);
     clearButton.addEventListener('click', handleClearButtonClick);
+    document.addEventListener('click', function (event) {
+        if (event.target && event.target.matches("input[type='radio']")) {
+            colour = event.target.value;
+        }
+    }, false);
 
     async function clearData() {
        await sendData(JSON.stringify({}), 'clear');
     }
 
-    async function toggleCell(cell) {
+    async function setCell(cell) {
         const x = cell.getAttribute('data-x');
         const y = cell.getAttribute('data-y');
-        cell.classList.toggle('filled');
-        await sendPixelData(x, y);
+        cell.dataset.colour = colour;
+        await sendPixelData(x, y, colour);
     }    
 
-    async function sendPixelData(x, y) {
-        sendData({ x: x, y: y }, "submit");
+    async function sendPixelData(x, y, colour) {
+        sendData({ x: x, y: y, colour: colour}, "submit");
     }
 
     async function sendData(message, controller){

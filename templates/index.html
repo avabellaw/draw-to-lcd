@@ -11,12 +11,19 @@
         {% for y in range(pixels|length) %}
             {% for x in range(pixels|length) %}
                 {% set pixel = pixels[y][x] %}
-                <div id="{{ x }}{{ y }}" data-x="{{ x }}" data-y="{{ y }}" class="cell {% if pixel %}filled{% endif %}"></div>
+                <div id="{{ x }}{{ y }}" data-x="{{ x }}" data-y="{{ y }}" data-colour="{{ pixel }}" class="cell"></div>
             {% endfor %}
         {% endfor %}
     </div>
     <button onclick="sendData()">Send Data</button>
     <button id="clear">Clear Grid</button>
+
+    <div id="colourpicker">
+        {% for colour in range(16) %}
+            <label for="colour{{ colour }}">{{ colour }}</label>
+            <input type="radio" name="colour" id="colour{{ colour }}" value="{{ colour }}" {% if colour == 15 %}checked{% endif %}>
+        {% endfor %}
+    </div>
 
     <script src="{{ url_for('static', filename='js/grid.js') }}"></script>
 </body>
