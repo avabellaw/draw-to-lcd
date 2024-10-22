@@ -1,44 +1,28 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-    class Square {
-        static colours = {
-            0: "black",
-            1: "rgb(136, 136, 136)",
-            2: "rgb(144.5, 144.5, 144.5)",
-            3: "rgb(153, 153, 153)",
-            4: "rgb(161.5, 161.5, 161.5)",
-            5: "rgb(170, 170, 170)",
-            6: "rgb(178.5, 178.5, 178.5)",
-            7: "rgb(187, 187, 187)",
-            8: "rgb(195.5, 195.5, 195.5)",
-            9: "rgb(204, 204, 204)",
-            10: "rgb(212.5, 212.5, 212.5)",
-            11: "rgb(221, 221, 221)",
-            12: "rgb(229.5, 229.5, 229.5)",
-            13: "rgb(238, 238, 238)",
-            14: "rgb(246.5, 246.5, 246.5)",
-            15: "rgb(255, 255, 255)"
-        }
-
-        constructor(x, y, size, context) {
-            this.x = x;
-            this.y = y;
-            this.size = size;
-            
-            context.fillStyle = "black";
-            context.fillRect(this.x, this.y, this.size, this.size);
-        }
-
-        setColour = (colour) => {
-            context.fillStyle = Square.colours[colour];
-            context.fillRect(this.x, this.y, this.size, this.size);
-        }
+    const colours = {
+        0: "black",
+        1: "rgb(136, 136, 136)",
+        2: "rgb(144.5, 144.5, 144.5)",
+        3: "rgb(153, 153, 153)",
+        4: "rgb(161.5, 161.5, 161.5)",
+        5: "rgb(170, 170, 170)",
+        6: "rgb(178.5, 178.5, 178.5)",
+        7: "rgb(187, 187, 187)",
+        8: "rgb(195.5, 195.5, 195.5)",
+        9: "rgb(204, 204, 204)",
+        10: "rgb(212.5, 212.5, 212.5)",
+        11: "rgb(221, 221, 221)",
+        12: "rgb(229.5, 229.5, 229.5)",
+        13: "rgb(238, 238, 238)",
+        14: "rgb(246.5, 246.5, 246.5)",
+        15: "rgb(255, 255, 255)"
     }
 
     const canvas = document.querySelector("canvas");
     const context = canvas.getContext("2d")
     const pixelCount = 128;
-    const pixelSize = 10;
+    const pixelSize = 2;
     let penColour = 15;
 
     grid = [pixelCount];
@@ -49,35 +33,48 @@ document.addEventListener('DOMContentLoaded', () => {
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     for (let i = 0; i < pixelCount; i++) {
-        row = [pixelCount];
         for (let j = 0; j < pixelCount; j++) {
-            row.push(new Square(i * pixelSize + i + 1, j * pixelSize + j + 1, pixelSize, context));
+            drawSquare(i * pixelSize + i + 1, j * pixelSize + j + 1, 0);
         }
+    }
 
-        grid.push(row); 
+    function drawSquare(x, y, colour) {
+        context.fillStyle = colours[colour];
+        context.fillRect(x, y, pixelSize, pixelSize);
+    }
+
+    function getSquareXY(event) {
+        const rect = canvas.getBoundingClientRect();
+        let x = event.clientX - rect.left;
+        let y = event.clientY - rect.top;
+        x -= x % (pixelSize + 1) - 1;
+        y -= y % (pixelSize + 1) - 1;
+
+        return {x, y}
     }
 
     // Event listeners
+    let isMouseDown = false;
     canvas.addEventListener('mousedown', (e) => {
         isMouseDown = true;
-        getSquare(e).setColour(penColour);
+        coords = getSquareXY(e);
+        drawSquare(coords.x, coords.y, penColour);
     });
 
     canvas.addEventListener('mouseup', (e) => {
         isMouseDown = false;
     });
 
+    let previousCoords = null;
     canvas.addEventListener('mousemove', (e) => {
         if (isMouseDown) {
-            getSquare(e).setColour(penColour);
+            coords = getSquareXY(e);
+            if (!previousCoords || !(coords.x === previousCoords.x && coords.y === previousCoords.y)) {
+                drawSquare(coords.x, coords.y, penColour);
+                previousCoords = coords
+            }
         }
     });
-
-    function getSquare(event){
-        const x = Math.floor(event.clientX / (pixelSize + 1));
-        const y = Math.floor(event.clientY / (pixelSize + 1));
-        return grid[x][y];
-    }
 
 
     // let isMouseDown = false;
