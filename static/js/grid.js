@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const context = canvas.getContext("2d")
     const pixelCount = 128;
     const pixelSize = 10;
-    let penColour = "15";
+    let penColour = 15;
 
     grid = [pixelCount];
 
@@ -61,6 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.addEventListener('mousedown', (e) => {
         isMouseDown = true;
         getSquare(e).setColour(penColour);
+    });
+
+    canvas.addEventListener('mouseup', (e) => {
+        isMouseDown = false;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (isMouseDown) {
+            getSquare(e).setColour(penColour);
+        }
     });
 
     function getSquare(event){
