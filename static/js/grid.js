@@ -138,14 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function sendData(message, controller){
         try {
-            const response = await fetch(`/${controller}`, {
+            await fetch(`/${controller}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(message),
             });
-            const data = await response.json();
         } catch (error) {
             console.error('Error:', error);
         }
