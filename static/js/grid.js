@@ -1,156 +1,123 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-    const colours = {
-        0: "black",
-        1: "rgb(136, 136, 136)",
-        2: "rgb(144.5, 144.5, 144.5)",
-        3: "rgb(153, 153, 153)",
-        4: "rgb(161.5, 161.5, 161.5)",
-        5: "rgb(170, 170, 170)",
-        6: "rgb(178.5, 178.5, 178.5)",
-        7: "rgb(187, 187, 187)",
-        8: "rgb(195.5, 195.5, 195.5)",
-        9: "rgb(204, 204, 204)",
-        10: "rgb(212.5, 212.5, 212.5)",
-        11: "rgb(221, 221, 221)",
-        12: "rgb(229.5, 229.5, 229.5)",
-        13: "rgb(238, 238, 238)",
-        14: "rgb(246.5, 246.5, 246.5)",
-        15: "rgb(255, 255, 255)"
-    }
-
-    const canvas = document.querySelector("canvas");
-    const context = canvas.getContext("2d")
-    const pixelCount = 128;
-    const pixelSize = 2;
+    const pixelCount = 127;
+    const pixelSize = 10;
     let penColour = 15;
 
-    grid = [pixelCount];
+    const colours = {
+        0: 0x000000, // black
+        1: 0x888888,
+        2: 0x909090,
+        3: 0x999999,
+        4: 0xa1a1a1,
+        5: 0xaaaaaa,
+        6: 0xb2b2b2,
+        7: 0xbbbbbb,
+        8: 0xc3c3c3,
+        9: 0xcccccc,
+        10: 0xd4d4d4,
+        11: 0xdddddd,
+        12: 0xe5e5e5,
+        13: 0xeeeeee,
+        14: 0xf6f6f6,
+        15: 0xffffff
+    };
 
-    canvas.width = pixelCount * pixelSize + pixelCount + 1;
-    canvas.height = pixelCount * pixelSize + pixelCount + 1;
-    context.fillStyle = "gray";
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    // Screen size including grid lines 
+    const SCREEN_SIZE = pixelCount * pixelSize + pixelCount + 1
 
+    // Create PixiJS application
+    const app = new PIXI.Application({
+        width: SCREEN_SIZE,
+        height: SCREEN_SIZE,
+        backgroundColor: 0x808080,
+        eventMode: "static",
+        eventFeatures: {
+            move: true,
+            globalMove: false,
+            click: true,
+            wheel: false,
+        }
+    });
+    document.getElementById("canvas-container").appendChild(app.view);
+
+    // Create and add PIXI.js grid graphics
+    const gridGraphics = new PIXI.Graphics();
+    app.stage.addChild(gridGraphics);
+
+    // Draw initial squares onto grid
     for (let i = 0; i < pixelCount; i++) {
         for (let j = 0; j < pixelCount; j++) {
             drawSquare(i * pixelSize + i + 1, j * pixelSize + j + 1, 0);
         }
     }
 
+    // Add event listeners
+    addEventListeners();
+
+    /**
+     * Draws the square using the given x, y coordinates and colour
+     * @param {int} x Square x
+     * @param {int} y Square y
+     * @param {int} colour Square colour
+     */
     function drawSquare(x, y, colour) {
-        context.fillStyle = colours[colour];
-        context.fillRect(x, y, pixelSize, pixelSize);
+        gridGraphics.beginFill(colours[colour]);
+        gridGraphics.drawRect(x, y, pixelSize, pixelSize);
+        gridGraphics.endFill();
     }
 
+    /**
+     * Returns the x and y coordinates of the square that the mouse is currently over
+     * @param {*} event The event object to get the global mouse coordinates
+     * @returns The coordinates of the target square
+     */
     function getSquareXY(event) {
-        const rect = canvas.getBoundingClientRect();
-        let x = event.clientX - rect.left;
-        let y = event.clientY - rect.top;
+        let x = event.data.global.x;
+        let y = event.data.global.y;
         x -= x % (pixelSize + 1) - 1;
         y -= y % (pixelSize + 1) - 1;
 
-        return {x, y}
+        return { x, y };
     }
 
-    // Event listeners
-    let isMouseDown = false;
-    canvas.addEventListener('mousedown', (e) => {
-        isMouseDown = true;
-        coords = getSquareXY(e);
-        drawSquare(coords.x, coords.y, penColour);
-    });
+    /**
+     * Function to add PIXI.js mouse event listeners
+     */
+    function addEventListeners() {
+        let isMouseDown = false;
+        let prevCoords = { x: null, y: null };
 
-    canvas.addEventListener('mouseup', (e) => {
-        isMouseDown = false;
-    });
+        // app.stage.interactive = true; // v7 version of eventMode = static
+        app.stage.hitArea = app.screen;
 
-    let previousCoords = null;
-    canvas.addEventListener('mousemove', (e) => {
-        if (isMouseDown) {
-            coords = getSquareXY(e);
-            if (!previousCoords || !(coords.x === previousCoords.x && coords.y === previousCoords.y)) {
-                drawSquare(coords.x, coords.y, penColour);
-                previousCoords = coords
-            }
+        app.stage.on('pointerdown', (event) => {
+            isMouseDown = true;
+            const coords = getSquareXY(event);
+            drawSquare(coords.x, coords.y, penColour);
+        });
+
+        const mouseClickReleased = () => {
+            isMouseDown = false;
+            prevCoords = { x: null, y: null };
         }
-    });
 
+        app.stage.on('pointerup', () => {
+            mouseClickReleased();
+        });
 
-    // let isMouseDown = false;
-    // let colour = 15;
-    
-    // const grid = document.getElementById('grid');
-    // const clearButton = document.getElementById('clear');
+        app.stage.on('pointerupoutside', () => {
+            mouseClickReleased();
+        });
 
-    // // Event handlers
-    // const handleMouseDown = (event) => {
-    //     isMouseDown = true;
-    //     setCell(event.target);
-    // }
-
-    // const handleMouseUp = () => { isMouseDown = false; }
-
-    // const handleMouseOver = (event) => {
-    //     if (isMouseDown) {
-    //         setCell(event.target);
-    //     }
-    // }  
-
-    // async function handleClearButtonClick() {
-    //     const cells = document.querySelectorAll('.filled');
-    //     cells.forEach(cell => {
-    //         cell.classList.remove('filled');
-    //     });
-    //     await clearData();
-    // }
-
-    // // Add event listeners
-    // grid.addEventListener('mousedown', handleMouseDown );
-    // grid.addEventListener('mouseup', handleMouseUp);
-    // grid.addEventListener('mouseover', handleMouseOver);
-    // clearButton.addEventListener('click', handleClearButtonClick);
-    // document.addEventListener('click', function (event) {
-    //     if (event.target && event.target.matches("input[type='radio']")) {
-    //         colour = event.target.value;
-    //     }
-    // }, false);
-
-    // async function clearData() {
-    //    await sendData(JSON.stringify({}), 'clear');
-    // }
-
-    // async function setCell(cell) {
-    //     const x = cell.getAttribute('data-x');
-    //     const y = cell.getAttribute('data-y');
-    //     cell.dataset.colour = colour;
-    //     await sendPixelData(x, y, colour);
-    // }    
-
-    // async function sendPixelData(x, y, colour) {
-    //     sendData({ x: x, y: y, colour: colour}, "submit");
-    // }
-
-    // async function sendData(message, controller){
-    //     try {
-    //         const response = await fetch(`/${controller}`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify(message),
-    //         });
-    //         const data = await response.json();
-    //     } catch (error) {
-    //         console.error('Error:', error);
-    //     }
-    // }
-
-    // // Clean up event listeners when the window is unloaded
-    // window.addEventListener('unload', () => {
-    //     grid.removeEventListener('mousedown', handleMouseDown);
-    //     grid.removeEventListener('mouseup', handleMouseUp);
-    //     grid.removeEventListener('mouseover', handleMouseOver);
-    //     clearButton.removeEventListener('click', clearData);
-    // });
+        app.stage.on('pointermove', (event) => {
+            if (isMouseDown) {
+                const coords = getSquareXY(event);
+                if (coords.x !== prevCoords.x || coords.y !== prevCoords.y) {
+                    drawSquare(coords.x, coords.y, penColour);
+                    prevCoords = coords;
+                }
+            }
+        });
+    }    
 });

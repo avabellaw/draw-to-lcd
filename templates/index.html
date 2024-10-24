@@ -7,9 +7,7 @@
     <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> -->
 </head>
 <body>
-    <div id="grid">
-        <canvas></canvas>
-    </div>
+    <div id="canvas-container"></div>
     <!-- <button onclick="sendData()">Send Data</button> -->
     <button id="clear">Clear Grid</button>
 
@@ -20,6 +18,7 @@
         {% endfor %}
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.3/pixi.min.js"></script>
     <script src="{{ url_for('static', filename='js/grid.js') }}"></script>
 </body>
 </html>
