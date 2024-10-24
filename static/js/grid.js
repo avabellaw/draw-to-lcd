@@ -121,6 +121,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }   
 
+    async function clearPixels() {
+        for (let y = 0; y < pixelCount; y++) {
+            for (let x = 0; x < pixelCount; x++) {
+                drawSquare(x * (pixelSize + 1) + 1, y * (pixelSize + 1) + 1, 0);
+            }
+        }
+        await sendData(JSON.stringify({}), 'clear');
+    }
+
     /**
      * Send pixel data to the lcd's server
      * @param {*} x Pixel x
@@ -189,12 +198,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Colour picker event listener
         const colorPicker = document.querySelectorAll('input[name="colour"]');
         colorPicker.forEach(radio => {
             radio.addEventListener('change', (event) => {
                 penColour = parseInt(event.target.value, 10);
                 console.log(penColour);
             });
+        });
+
+        // Clear button event listener
+        const clearButton = document.getElementById('clear');
+        clearButton.addEventListener('click', () => {
+            clearPixels();
         });
     }    
 });
