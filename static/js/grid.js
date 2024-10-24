@@ -82,6 +82,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * @param {*} x Square x
+     * @param {*} y Square y
+     * @returns The corresponding x and y coordinates on the LCD
+     */
+    function getLCDPixelXY(x, y) {
+        x = (x - 1) / (pixelSize + 1)
+        y = (y - 1) / (pixelSize + 1)
+        return { x, y };
+    }
+
+    // Create a queue for pixels
+    const pixelsQueue = [];
+    let isProcessing = false;
+
+    // Function to process the queue
+    async function processQueue() {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+        const pixels = pixelsQueue.splice(0, pixelsQueue.length); // Get all pixels
+        await sendPixelData(pixels);
+        
+        isProcessing = false;
+    }
+
+    /**
      * Draw the square on the grid and send pixel data to the lcd's server
      * @param {*} x Square x
      * @param {*} y Square y
@@ -89,8 +113,13 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function setPixel(x, y, colour) {
         drawSquare(x, y, colour);
-        await sendPixelData((x - 1) / pixelSize, (y - 1) / pixelSize, colour);
-    }    
+        pixel = getLCDPixelXY(x, y);
+        pixelsQueue.push({ x: pixel.x, y: pixel.y, colour });
+        if (!isProcessing) {
+            isProcessing = true;
+            processQueue();
+        }
+    }   
 
     /**
      * Send pixel data to the lcd's server
@@ -98,8 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {*} y Pixel y
      * @param {*} colour Pixel colour
      */
-    async function sendPixelData(x, y, colour) {
-        await sendData({ x: x, y: y, colour: colour}, "submit");
+    async function sendPixelData(pixels) {
+        await sendData(pixels, "submit");
     }
 
     /**

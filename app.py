@@ -17,7 +17,6 @@ class PixelGrid:
             s.sendto("GET".encode(), ('192.168.1.169', 65432))
             data, _ = s.recvfrom(65536)
             self.pixels = json.loads(data.decode())
-            print(self.pixels)
 
     def set_pixel(self, x, y, value):
         '''Set a pixel on the webpage and update the lcd'''
@@ -51,14 +50,15 @@ def home():
 @app.route('/submit', methods=['POST'])
 def submit():
     '''Controller for handling pixel data from the webpage'''
-    data = request.get_json()
-    x, y, colour = int(data.get('x')), int(data.get('y')), data.get('colour')
-
-    pixel = colour
-    pixel_grid.set_pixel(x, y, pixel)
+    pixels = request.get_json()
+    for pixel in pixels:
+        x, y, colour = int(pixel.get('x')), \
+                       int(pixel.get('y')), \
+                       pixel.get('colour')
+        pixel_grid.set_pixel(x, y, colour)
 
     return jsonify({'status': 'success',
-                    'pixel': f"{pixel}", 'x': x, 'y': y})
+                    'pixel': f"{colour}", 'x': x, 'y': y})
 
 
 @app.route('/clear', methods=['POST'])
