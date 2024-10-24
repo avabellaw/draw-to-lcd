@@ -188,5 +188,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+
+        const colorPicker = document.querySelectorAll('input[name="colour"]');
+        colorPicker.forEach(radio => {
+            radio.addEventListener('change', (event) => {
+                penColour = parseInt(event.target.value, 10);
+                console.log(penColour);
+            });
+        });
     }    
 });
