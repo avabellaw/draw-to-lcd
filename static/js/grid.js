@@ -82,6 +82,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Draw the square on the grid and send pixel data to the lcd's server
+     * @param {*} x Square x
+     * @param {*} y Square y
+     * @param {*} colour Square colour
+     */
+    async function setPixel(x, y, colour) {
+        drawSquare(x, y, colour);
+        await sendPixelData((x - 1) / pixelSize, (y - 1) / pixelSize, colour);
+    }    
+
+    /**
+     * Send pixel data to the lcd's server
+     * @param {*} x Pixel x
+     * @param {*} y Pixel y
+     * @param {*} colour Pixel colour
+     */
+    async function sendPixelData(x, y, colour) {
+        await sendData({ x: x, y: y, colour: colour}, "submit");
+    }
+
+    /**
+     * Send data to the server
+     * @param {*} message The data
+     * @param {*} controller The controller to send the data to 
+     */
+    async function sendData(message, controller){
+        try {
+            const response = await fetch(`/${controller}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(message),
+            });
+            const data = await response.json();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    /**
      * Function to add PIXI.js mouse event listeners
      */
     function addEventListeners() {
@@ -94,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         app.stage.on('pointerdown', (event) => {
             isMouseDown = true;
             const coords = getSquareXY(event);
-            drawSquare(coords.x, coords.y, penColour);
+            setPixel(coords.x, coords.y, penColour);
         });
 
         const mouseClickReleased = () => {
@@ -114,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isMouseDown) {
                 const coords = getSquareXY(event);
                 if (coords.x !== prevCoords.x || coords.y !== prevCoords.y) {
-                    drawSquare(coords.x, coords.y, penColour);
+                    setPixel(coords.x, coords.y, penColour);
                     prevCoords = coords;
                 }
             }
