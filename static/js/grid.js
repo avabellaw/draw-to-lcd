@@ -45,10 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridGraphics = new PIXI.Graphics();
     app.stage.addChild(gridGraphics);
 
-    // Draw initial squares onto grid
-    for (let i = 0; i < pixelCount; i++) {
-        for (let j = 0; j < pixelCount; j++) {
-            drawSquare(i * pixelSize + i + 1, j * pixelSize + j + 1, 0);
+    for (let y = 0; y < initialPixels.length; y++) {
+        for (let x = 0; x < initialPixels[y].length; x++) {
+            const colour = initialPixels[y][x];
+            drawSquare(x * (pixelSize + 1) + 1, y * (pixelSize + 1) + 1, colour);
         }
     }
 
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
         const pixels = pixelsQueue.splice(0, pixelsQueue.length); // Get all pixels
         await sendPixelData(pixels);
-        
+
         isProcessing = false;
     }
 
