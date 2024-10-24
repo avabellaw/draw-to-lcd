@@ -1,11 +1,11 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-    const pixelCount = 127;
+    const pixelCount = initialPixels.length - 1;
     const pixelSize = 10;
     let penColour = 15;
 
     const colours = {
-        0: 0x000000, // black
+        0: 0x000000,
         1: 0x888888,
         2: 0x909090,
         3: 0x999999,
